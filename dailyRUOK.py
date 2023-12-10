@@ -3,10 +3,10 @@ import os
 import random
 import google.generativeai as palm
 
+st.write(st.secrets["API_KEY"])
 
 # palm.configure(api_key=os.environ['API_KEY'])
 palm.configure(api_key=st.secrets["API_KEY"])
-# palm.configure(api_key="AIzaSyDQHRGycDrJhtQb023BjqybjKAzaj0yZMQ")
 
 # Function to generate a random response based on user input
 def generate_response(mood_score):
@@ -45,9 +45,6 @@ def call_palm_api(user_data):
     response = palm.generate_text(prompt=prompt)
     
     # Return the result from the API
-    return response.result
-
-    response = palm.generate_text(prompt)
     return response.result
 
 # Streamlit app
