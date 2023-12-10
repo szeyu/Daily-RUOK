@@ -3,10 +3,9 @@ import os
 import random
 import google.generativeai as palm
 
-st.write(st.secrets["API_KEY"])
-
 # palm.configure(api_key=os.environ['API_KEY'])
 palm.configure(api_key=st.secrets["API_KEY"])
+
 
 # Function to generate a random response based on user input
 def generate_response(mood_score):
