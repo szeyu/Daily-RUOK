@@ -28,7 +28,7 @@ def displayGraph():
     fig, ax = plt.subplots()
     ax.plot(x_smooth, y_smooth, label="Smoothed Line", color='blue')
     ax.scatter(range(len(past_scores)), past_scores, label="Original Scores", color='red')
-    ax.set_xlabel("Time")
+    ax.set_xlabel("Day")
     ax.set_ylabel("Emotional Well-being Score")
 
     # Display the plot using Streamlit
@@ -37,11 +37,11 @@ def displayGraph():
 # Function to generate a random response based on user input
 def generate_response(mood_score):
     responses = [
-        "Great to hear that you're feeling fantastic!",
-        "You're doing well! Keep up the positive energy.",
-        "If you're feeling down, remember that tomorrow is a new day.",
-        "Your well-being matters. Take some time for self-care.",
-        "Sending you positive vibes! Remember, you're not alone.",
+        "Great to hear that you're feeling fantastic! 😊",
+        "You're doing well! Keep up the positive energy. 👍",
+        "If you're feeling down, remember that tomorrow is a new day. 🌈",
+        "Your well-being matters. Take some time for self-care. 🌺",
+        "Sending you positive vibes! Remember, you're not alone. 🌟",
     ]
     if mood_score >= 8:
         return random.choice(responses[:2])
@@ -70,10 +70,10 @@ def call_palm_api(user_data, objective):
 
 # Streamlit app
 def main():
-    st.title("Daily RUOK System")
+    st.title("Daily RUOK System 😊")
     
    # User input section
-    st.header("How are you feeling today?")
+    st.header("How are you feeling today? 🌟")
     mood_score = st.slider("Rate your mood (1-10):", key="mood_score", min_value=1, max_value=10, step=1)
     sleep_quality = st.slider("How would you rate the quality of your sleep last night? (1-10)", key="sleep_quality", min_value=1, max_value=10, step=1)
     stress_level = st.slider("On a scale of 1 to 10, how stressed do you feel today?", key="stress_level", min_value=1, max_value=10, step=1)
@@ -101,13 +101,13 @@ def main():
     st.write(f"{questions_for_today.capitalize()}:")
 
     # Display other questions using sliders
-    positive_experience = st.text_input("What was the best thing that happened yesterday?", key="positive_experience") if questions_for_today == "positive_experience" else ""
-    challenges_concerns = st.text_input("Did you face any challenges or concerns yesterday that you would like to share?", key="challenges_concerns") if questions_for_today == "challenges_concerns" else ""
-    self_reflection = st.text_area("Take a moment to reflect on your overall well-being. Is there anything specific on your mind?", key="self_reflection") if questions_for_today == "self_reflection" else ""
-    gratitude = st.text_input("What are you grateful for today?", key="gratitude") if questions_for_today == "gratitude" else ""
-    daily_goals = st.text_area("Do you have any specific goals or intentions for today?", key="daily_goals") if questions_for_today == "daily_goals" else ""
-    social_connections = st.text_area("Did you engage with friends or family yesterday? How did it make you feel?", key="social_connections") if questions_for_today == "social_connections" else ""
-    accomplishments = st.text_area("What is one thing you accomplished yesterday that you're proud of?", key="accomplishments") if questions_for_today == "accomplishments" else ""
+    positive_experience = st.text_input("What was the best thing that happened yesterday? 🌈", key="positive_experience") if questions_for_today == "positive_experience" else ""
+    challenges_concerns = st.text_input("Did you face any challenges or concerns yesterday that you would like to share? 💪", key="challenges_concerns") if questions_for_today == "challenges_concerns" else ""
+    self_reflection = st.text_area("Take a moment to reflect on your overall well-being. Is there anything specific on your mind? 🤔", key="self_reflection") if questions_for_today == "self_reflection" else ""
+    gratitude = st.text_input("What are you grateful for today? 🙏", key="gratitude") if questions_for_today == "gratitude" else ""
+    daily_goals = st.text_area("Do you have any specific goals or intentions for today? 🎯", key="daily_goals") if questions_for_today == "daily_goals" else ""
+    social_connections = st.text_area("Did you engage with friends or family yesterday? How did it make you feel? 👫", key="social_connections") if questions_for_today == "social_connections" else ""
+    accomplishments = st.text_area("What is one thing you accomplished yesterday that you're proud of? 🚀", key="accomplishments") if questions_for_today == "accomplishments" else ""
 
 
     # Trigger API call when user clicks the "Submit" button
@@ -130,7 +130,7 @@ def main():
         }
         
         # Call PaLM API and get the response
-        palm_response = call_palm_api(user_data, "Now act as a counselor and give me compliment / praises / healing / advices / motivation")
+        palm_response = call_palm_api(user_data, "Now act as a counselor and give me motivtion and advice")
         emotionalScore = call_palm_api(user_data, "Rate my emotional well-being in a score of 100. I just want you to output the number only")
         past_scores.append(emotionalScore)
 
