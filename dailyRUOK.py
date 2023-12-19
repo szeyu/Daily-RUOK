@@ -1,11 +1,38 @@
 import streamlit as st
 import os
+import datetime
 import random
 import google.generativeai as palm
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy.interpolate import make_interp_spline
 
 # palm.configure(api_key=os.environ['API_KEY'])
 palm.configure(api_key=st.secrets["API_KEY"])
 
+# past record of emotional well-being score
+past_scores = [60,76,83,80,75]
+
+# Generate smoothed line graph
+def smooth_line_graph(scores):
+    x = np.arange(len(scores))
+    x_smooth = np.linspace(x.min(), x.max(), 300)
+    spl = make_interp_spline(x, scores, k=3)
+    y_smooth = spl(x_smooth)
+    return x_smooth, y_smooth
+
+def displayGraph():
+    # Display the original and smoothed line graphs
+    x_smooth, y_smooth = smooth_line_graph(past_scores)
+
+    fig, ax = plt.subplots()
+    ax.plot(x_smooth, y_smooth, label="Smoothed Line", color='blue')
+    ax.scatter(range(len(past_scores)), past_scores, label="Original Scores", color='red')
+    ax.set_xlabel("Time")
+    ax.set_ylabel("Emotional Well-being Score")
+
+    # Display the plot using Streamlit
+    st.pyplot(fig)
 
 # Function to generate a random response based on user input
 def generate_response(mood_score):
@@ -24,21 +51,16 @@ def generate_response(mood_score):
         return random.choice(responses[4:])
 
 # Function to call PaLM API by MakerSute
-def call_palm_api(user_data):
+def call_palm_api(user_data, objective):
     # Customize the data you send to the PaLM API based on your requirements
-    prompt = f"Yesterday, I felt {user_data['mood_score']} and the best thing that happened was: {user_data['positive_experience']}. "
-    prompt += f"I faced challenges/concerns: {user_data['challenges_concerns']}. "
-    prompt += f"Reflection on well-being: {user_data['self_reflection']}. "
-    prompt += f"Gratitude: {user_data['gratitude']}. "
-    prompt += f"Physical well-being: {user_data['physical_wellbeing']}. "
-    prompt += f"Sleep quality: {user_data['sleep_quality']}. "
-    prompt += f"Stress level: {user_data['stress_level']}. "
-    prompt += f"Daily goals: {user_data['daily_goals']}. "
-    prompt += f"Social connections: {user_data['social_connections']}. "
-    prompt += f"Mindfulness/relaxation: {user_data['mindfulness_relaxation']}. "
-    prompt += f"Accomplishments: {user_data['accomplishments']}."
+    # Create a new prompt based on the sequence of user_data
+    prompt = ""
+    for key, value in user_data.items():
+        if value == "":
+            continue
+        prompt += f"{key.replace('_', ' ').capitalize()}: {value}. "
     
-    prompt += "Now act as a counselor and give me compliment / praises / healing / advices / motivation"
+    prompt += objective
     
     # Make a POST request to the PaLM API with the extended prompt
     response = palm.generate_text(prompt=prompt)
@@ -53,40 +75,68 @@ def main():
    # User input section
     st.header("How are you feeling today?")
     mood_score = st.slider("Rate your mood (1-10):", key="mood_score", min_value=1, max_value=10, step=1)
-    positive_experience = st.text_input("What was the best thing that happened yesterday?", key="positive_experience")
-
-    # Additional questions
-    challenges_concerns = st.text_input("Did you face any challenges or concerns yesterday that you would like to share?", key="challenges_concerns")
-    self_reflection = st.text_area("Take a moment to reflect on your overall well-being. Is there anything specific on your mind?", key="self_reflection")
-    gratitude = st.text_input("What are you grateful for today?", key="gratitude")
-    physical_wellbeing = st.text_area("How would you describe your physical well-being today?", key="physical_wellbeing")
-    sleep_quality = st.slider("How would you rate the quality of your sleep last night?", key="sleep_quality", min_value=1, max_value=10, step=1)
+    sleep_quality = st.slider("How would you rate the quality of your sleep last night? (1-10)", key="sleep_quality", min_value=1, max_value=10, step=1)
     stress_level = st.slider("On a scale of 1 to 10, how stressed do you feel today?", key="stress_level", min_value=1, max_value=10, step=1)
-    daily_goals = st.text_area("Do you have any specific goals or intentions for today?", key="daily_goals")
-    social_connections = st.text_area("Did you engage with friends or family yesterday? How did it make you feel?", key="social_connections")
-    mindfulness_relaxation = st.text_area("Have you taken any time for mindfulness or relaxation today?", key="mindfulness_relaxation")
-    accomplishments = st.text_area("What is one thing you accomplished yesterday that you're proud of?", key="accomplishments")
+    physical_wellbeing = st.slider("How would you describe your physical well-being today? (1-10)", key="physical_wellbeing", min_value=1, max_value=10, step=1)
+    mindfulness_relaxation = st.slider("Have you taken any time for mindfulness or relaxation today? (1-10)", key="mindfulness_relaxation", min_value=1, max_value=10, step=1)
+
+    # Get the current day of the week (0 = Monday, 1 = Tuesday, ..., 6 = Sunday)
+    current_day = datetime.datetime.now().weekday()
+
+    # Define fixed questions for each day
+    questions_by_day = {
+        0: "positive_experience",
+        1: "self_reflection",
+        2: "daily_goals",
+        3: "accomplishments",
+        4: "challenges_concerns",
+        5: "gratitude",
+        6: "social_connections"
+    }
+
+    # Get the question for the current day
+    questions_for_today = questions_by_day.get(current_day, "")
+
+    # Display the question for the current day
+    st.write(f"{questions_for_today.capitalize()}:")
+
+    # Display other questions using sliders
+    positive_experience = st.text_input("What was the best thing that happened yesterday?", key="positive_experience") if questions_for_today == "positive_experience" else ""
+    challenges_concerns = st.text_input("Did you face any challenges or concerns yesterday that you would like to share?", key="challenges_concerns") if questions_for_today == "challenges_concerns" else ""
+    self_reflection = st.text_area("Take a moment to reflect on your overall well-being. Is there anything specific on your mind?", key="self_reflection") if questions_for_today == "self_reflection" else ""
+    gratitude = st.text_input("What are you grateful for today?", key="gratitude") if questions_for_today == "gratitude" else ""
+    daily_goals = st.text_area("Do you have any specific goals or intentions for today?", key="daily_goals") if questions_for_today == "daily_goals" else ""
+    social_connections = st.text_area("Did you engage with friends or family yesterday? How did it make you feel?", key="social_connections") if questions_for_today == "social_connections" else ""
+    accomplishments = st.text_area("What is one thing you accomplished yesterday that you're proud of?", key="accomplishments") if questions_for_today == "accomplishments" else ""
+
 
     # Trigger API call when user clicks the "Submit" button
     if st.button("Submit"):
         # Prepare data for the PaLM API call (customize as needed)
         user_data = {
             "mood_score": mood_score,
+            "sleep_quality": sleep_quality,
+            "stress_level": stress_level,
+            "physical_wellbeing": physical_wellbeing,
+            "mindfulness_relaxation": mindfulness_relaxation,
+
             "positive_experience": positive_experience,
             "challenges_concerns": challenges_concerns,
             "self_reflection": self_reflection,
             "gratitude": gratitude,
-            "physical_wellbeing": physical_wellbeing,
-            "sleep_quality": sleep_quality,
-            "stress_level": stress_level,
             "daily_goals": daily_goals,
             "social_connections": social_connections,
-            "mindfulness_relaxation": mindfulness_relaxation,
             "accomplishments": accomplishments,
         }
         
         # Call PaLM API and get the response
-        palm_response = call_palm_api(user_data)
+        palm_response = call_palm_api(user_data, "Now act as a counselor and give me compliment / praises / healing / advices / motivation")
+        emotionalScore = call_palm_api(user_data, "Rate my emotional well-being in a score of 100. I just want you to output the number only")
+        past_scores.append(emotionalScore)
+
+        # Display the API response (customize as needed)
+        st.header("Your Score Today:")
+        st.subheader(emotionalScore)
 
         # Display the API response (customize as needed)
         st.header("PaLM API Response:")
@@ -99,7 +149,8 @@ def main():
 
     # Display emotional well-being graph (placeholder)
     st.header("Emotional Well-being Over Time:")
-    # Include code for plotting graphs or visualizations based on user's historical data
+    # plotting graphs or visualizations based on user's historical data
+    displayGraph()
 
 if __name__ == "__main__":
     main()
