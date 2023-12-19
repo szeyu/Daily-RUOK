@@ -1,6 +1,9 @@
 # Daily-RUOK
 ## Project for KitaHack 2024
 
+## Link to Streamlit Web App
+https://daily-ruok.streamlit.app/
+
 ## Link to Idea 💡
 https://docs.google.com/document/d/1kMT7oTJ7EyAUgxJHs34P0fIzbaU685HVMlZfEkzFxqM/edit#heading=h.z6ne0og04bp5
 
@@ -23,7 +26,7 @@ pip install -r requirements. txt
 Open your anaconda prompt or python terminal
 
 ### Step 4
-cd into the folder directory
+cd into the github folder directory
 
 ### Step 5
 Run the following command
