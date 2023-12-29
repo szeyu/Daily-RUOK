@@ -18,7 +18,7 @@ def user_manual_popup():
     st.markdown("## User Manual📕")
 
     slides = [
-        "Welcome to the User Manual!😇 Click 'Next➡️' and 'Previous⬅️' to navigate through the slides.",
+        "Welcome to the User Manual!😇 Click 'Previous⬅️' and 'Next➡️' to navigate through the slides.",
         "You can pull the slider🎚️ score (low to high) based on the question.",
         "There will be an input field for you to answer the daily question. Each day will have a different question prepared for you.",
         "Once you submitted your responses, our bot will provide you advices💬 and your daily score💯",
@@ -32,19 +32,23 @@ def user_manual_popup():
     # Display current slide content
     st.markdown(slides[slide_index])
 
-    # Previous Button
-    if st.button("Previous⬅️") and slide_index > 0:
-        # Decrement slide index
-        slide_index -= 1
-        # Update session state
-        st.session_state.slide_index = slide_index
+    col1, col2, col3 = st.columns([1,1,1])
 
-    # Next Button
-    if st.button("Next➡️") and slide_index < len(slides) - 1:
-        # Increment slide index
-        slide_index += 1
-        # Update session state
-        st.session_state.slide_index = slide_index
+    with col1:
+        # Previous Button
+        if st.button("Previous⬅️") and slide_index > 0:
+            # Decrement slide index
+            slide_index -= 1
+            # Update session state
+            st.session_state.slide_index = slide_index
+
+    with col3:
+        # Next Button
+        if st.button("Next➡️") and slide_index < len(slides) - 1:
+            # Increment slide index
+            slide_index += 1
+            # Update session state
+            st.session_state.slide_index = slide_index
 
 # Generate smoothed line graph
 def smooth_line_graph(scores):
@@ -101,14 +105,39 @@ def call_palm_api(user_data, objective):
     # Return the result from the API
     return response.result
 
+def about_content():
+    st.markdown("## About Daily RUOK")
+    st.markdown(
+        """
+        🌟 The **Daily RUOK** system is designed to promote emotional self-awareness and resilience 
+        through daily check-ins and positive reflections. This system aligns seamlessly with SDG 3 
+        by emphasizing the interconnectedness of mental and physical health.
+
+        🚀 The key features of the **Daily RUOK** system include:
+        
+        - 📅 Daily Check-Ins: Users are encouraged to check in with themselves daily to reflect on their emotional well-being.
+        - 😄 Positive Reflections: The system fosters positivity by encouraging users to focus on positive aspects of their day.
+        - 🌿 Holistic Approach: Recognizing the importance of mental and physical health, the system promotes a holistic approach 
+          to emotional wellness.
+
+        🌍 This initiative contributes to building a healthier and more sustainable global community by addressing emotional wellness 
+        comprehensively. By fostering emotional self-awareness, the **Daily RUOK** system aims to empower individuals and 
+        contribute to a more resilient and emotionally healthy society.
+        """
+    )
+
 # Streamlit app
 def main():
     st.title("Daily RUOK System 😊")
-    st.header("Are you Ok(R U OK)? We are here to help!😇")
+    st.subheader("Are you Ok(R U OK)? We are here to help!😇")
+
+    # about our Daily RUOK description
+    with st.expander("About Daily RUOK"):
+        about_content()
 
     # Display user manual pop-up
     user_manual_popup()
-    
+
    # User input section
     st.header("How are you feeling today? 🌟")
     mood_score = st.slider("Rate your mood (1-10):", key="mood_score", min_value=1, max_value=10, step=1)
