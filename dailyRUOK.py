@@ -13,6 +13,39 @@ palm.configure(api_key=st.secrets["API_KEY"])
 # past record of emotional well-being score
 past_scores = [60,76,83,80,75]
 
+# user manual pop up
+def user_manual_popup():
+    st.markdown("## User Manual📕")
+
+    slides = [
+        "Welcome to the User Manual!😇 Click 'Next➡️' and 'Previous⬅️' to navigate through the slides.",
+        "You can pull the slider🎚️ score (low to high) based on the question.",
+        "There will be an input field for you to answer the daily question. Each day will have a different question prepared for you.",
+        "Once you submitted your responses, our bot will provide you advices💬 and your daily score💯",
+        "There will be a graph📈📉 recording your daily score of emotional well-being.",
+        "Let's get started!"
+    ]
+
+    # Initialize slide index
+    slide_index = st.session_state.get("slide_index", 0)
+
+    # Display current slide content
+    st.markdown(slides[slide_index])
+
+    # Previous Button
+    if st.button("Previous⬅️") and slide_index > 0:
+        # Decrement slide index
+        slide_index -= 1
+        # Update session state
+        st.session_state.slide_index = slide_index
+
+    # Next Button
+    if st.button("Next➡️") and slide_index < len(slides) - 1:
+        # Increment slide index
+        slide_index += 1
+        # Update session state
+        st.session_state.slide_index = slide_index
+
 # Generate smoothed line graph
 def smooth_line_graph(scores):
     x = np.arange(len(scores))
@@ -71,6 +104,10 @@ def call_palm_api(user_data, objective):
 # Streamlit app
 def main():
     st.title("Daily RUOK System 😊")
+    st.header("Are you Ok(R U OK)? We are here to help!😇")
+
+    # Display user manual pop-up
+    user_manual_popup()
     
    # User input section
     st.header("How are you feeling today? 🌟")
