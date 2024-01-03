@@ -16,19 +16,19 @@ The imperative achievement of Sustainable Development Goal 3 (SDG 3) - Good Heal
 The "Daily RUOK" system, with its focus on daily check-ins and positive reflections, aligns seamlessly with SDG 3 by promoting emotional self-awareness and resilience. This holistic approach emphasizes the interconnectedness of mental and physical health, highlighting the necessity for comprehensive strategies to address emotional wellness in building a healthier and more sustainable global community.
 
 ## Specifications
-### Personalised Emotional Support
+- ### Personalised Emotional Support
 "Daily RUOK" provides users with personalised responses, including advice, compliments, and motivational messages, tailored to their daily input.
 
-### Comprehensive Emotional Data Recording
+- ### Comprehensive Emotional Data Recording
 The system records and organizes user input over time, creating a comprehensive emotional well-being profile for each individual.
 
-### Visualised Emotional Journey
+- ### Visualised Emotional Journey
 Through intuitive graphical representations, such as graphs, the system visually illustrates the user's emotional journey. This allows users to track patterns, recognise trends, and observe their emotional progress over time.
 
-### Positive Reflection Encouragement
+- ### Positive Reflection Encouragement
 Focusing on daily check-ins and encouraging positive reflections, the system actively promotes emotional self-awareness and resilience.
 
-### Compassionate Companion
+- ### Compassionate Companion
 Acting as a compassionate companion, the "Daily RUOK" system guides individuals toward sustained emotional well-being and personal growth.
 
 ## Google Technology Used
